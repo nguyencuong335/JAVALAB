@@ -62,5 +62,6 @@ public class bai4 {
             if (i > 0) System.out.print(",");
             System.out.print(ans.get(i));
         }
+        sc.close();
     }
 }
