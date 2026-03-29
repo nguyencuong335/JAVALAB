@@ -4,8 +4,8 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class bai4 extends JPanel implements ActionListener, KeyListener{
-    int boardWidth = 360; 
+public class bai4 extends JPanel implements ActionListener, KeyListener {
+    int boardWidth = 360;
     int boardHeight = 640;
 
     Image backgroundImage;
@@ -13,7 +13,7 @@ public class bai4 extends JPanel implements ActionListener, KeyListener{
     Image topPipeImage;
     Image bottomPipeImage;
 
-    //Bird
+    // Bird
     int birdX = boardWidth / 8;
     int birdY = boardHeight / 2;
     int birdWidth = 34;
@@ -27,7 +27,8 @@ public class bai4 extends JPanel implements ActionListener, KeyListener{
     int pipeWidth = 64;
     int pipeHeight = 512;
     int pipeSpeed = -4;
-    int openingSpace = 150;
+    int openingSpace = 180;              // tang khe ho cho de choi
+    int pipeSpawnX = boardWidth + 180;   // sinh ong ngoai man hinh ben phai
 
     ArrayList<Pipe> pipes = new ArrayList<>();
     Random random = new Random();
@@ -48,7 +49,7 @@ public class bai4 extends JPanel implements ActionListener, KeyListener{
 
         Pipe(Image img, int x, int y, int width, int height) {
             this.img = img;
-            this.x = x; 
+            this.x = x;
             this.y = y;
             this.width = width;
             this.height = height;
@@ -68,7 +69,7 @@ public class bai4 extends JPanel implements ActionListener, KeyListener{
         // Tao cap ong dau tien
         placePipes();
 
-        // Timer tao ong moi
+        // Timer tao ong moi moi 1.5s
         placePipesTimer = new Timer(1500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -79,17 +80,24 @@ public class bai4 extends JPanel implements ActionListener, KeyListener{
         });
         placePipesTimer.start();
 
-        // Game Loop
+        // Game loop
         gameLoop = new Timer(1000 / 60, this);
         gameLoop.start();
     }
 
     public void placePipes() {
-        // Tao vi tri ngau nhien cho ong tren
+        // Tạo vi tri ngau nhien cho ong tren
         int randomPipeY = -pipeHeight / 4 - random.nextInt(pipeHeight / 2);
 
-        Pipe topPipe = new Pipe(topPipeImage, boardWidth, randomPipeY, pipeWidth, pipeHeight);
-        Pipe bottomPipe = new Pipe(bottomPipeImage, boardWidth, randomPipeY + pipeHeight + openingSpace, pipeWidth, pipeHeight);
+        Pipe topPipe = new Pipe(topPipeImage, pipeSpawnX, randomPipeY, pipeWidth, pipeHeight);
+        Pipe bottomPipe = new Pipe(
+            bottomPipeImage,
+            pipeSpawnX,
+            randomPipeY + pipeHeight + openingSpace,
+            pipeWidth,
+            pipeHeight
+        );
+
         pipes.add(topPipe);
         pipes.add(bottomPipe);
     }
@@ -99,7 +107,7 @@ public class bai4 extends JPanel implements ActionListener, KeyListener{
         velocityY += gravity;
         birdY += (int) velocityY;
 
-        // Dung mep tren hoac mep duoi => game over
+        // Dung mep tren hay mep duoi => game over
         if (birdY < 0 || birdY + birdHeight > boardHeight) {
             gameOver = true;
         }
@@ -109,7 +117,7 @@ public class bai4 extends JPanel implements ActionListener, KeyListener{
             Pipe pipe = pipes.get(i);
             pipe.x += pipeSpeed;
 
-            // Tinh diem: qua moi ong duoc 0.5 diem => qua 1 cap ong = 1 diem
+            // Tinh diem: qua moi ong duoc 0.5 diem => qua 1 cap ống = 1 diem
             if (!pipe.passed && birdX > pipe.x + pipe.width) {
                 score += 0.5;
                 pipe.passed = true;
@@ -121,14 +129,14 @@ public class bai4 extends JPanel implements ActionListener, KeyListener{
             }
         }
 
-        // XOa ong da ra khoi man hinh
+        // Xoa ong ra khoi man hinh
         while (pipes.size() > 0 && pipes.get(0).x + pipes.get(0).width < 0) {
             pipes.remove(0);
         }
     }
 
     public boolean collision(Pipe pipe) {
-        return birdX < pipe.x + pipe.width && 
+        return birdX < pipe.x + pipe.width &&
                birdX + birdWidth > pipe.x &&
                birdY < pipe.y + pipe.height &&
                birdY + birdHeight > pipe.y;
@@ -141,7 +149,13 @@ public class bai4 extends JPanel implements ActionListener, KeyListener{
         gameOver = false;
 
         pipes.clear();
+
+        // reset nhip tao ong
+        placePipesTimer.stop();
         placePipes();
+        placePipesTimer.start();
+
+        repaint();
     }
 
     @Override
@@ -189,9 +203,9 @@ public class bai4 extends JPanel implements ActionListener, KeyListener{
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER) {
             if (gameOver) {
-                restartGame(); // restart khi game over
+                restartGame();
             } else {
-                velocityY = jumpStrength; // chim nhay len
+                velocityY = jumpStrength;
             }
         }
     }
@@ -200,14 +214,14 @@ public class bai4 extends JPanel implements ActionListener, KeyListener{
     public void keyTyped(KeyEvent e) {
     }
 
-    @Override 
+    @Override
     public void keyReleased(KeyEvent e) {
     }
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Flappy Bird");
         bai4 gamePanel = new bai4();
-        
+
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
         frame.add(gamePanel);
@@ -217,5 +231,4 @@ public class bai4 extends JPanel implements ActionListener, KeyListener{
 
         gamePanel.requestFocusInWindow();
     }
-
 }
