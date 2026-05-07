@@ -8,23 +8,27 @@ import java.awt.*;
 
 public class ProductCard extends JPanel {
 
-    private Product product;
+    private static final Color CARD_COLOR = new Color(244, 244, 244);
+    private static final Color HOVER_COLOR = new Color(236, 236, 236);
+    private static final Color SELECTED_BORDER = new Color(70, 130, 255);
+    private static final Color TITLE_COLOR = new Color(75, 75, 75);
+    private static final Color SUBTLE_COLOR = new Color(170, 170, 170);
+    private static final Color TEXT_COLOR = new Color(70, 70, 70);
+
+    private final Product product;
 
     public ProductCard(Product product) {
         this.product = product;
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBackground(new Color(242, 242, 242));
+        setBackground(CARD_COLOR);
         setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         setPreferredSize(new Dimension(200, 238));
         setMinimumSize(new Dimension(200, 238));
         setMaximumSize(new Dimension(200, 238));
 
-        setBorder(new CompoundBorder(
-                new LineBorder(new Color(242, 242, 242), 2, true),
-                new EmptyBorder(10, 10, 10, 10)
-        ));
+        setCardBorder(CARD_COLOR);
 
         createCardUI();
     }
@@ -38,18 +42,12 @@ public class ProductCard extends JPanel {
         textPanel.setMinimumSize(new Dimension(180, 48));
         textPanel.setMaximumSize(new Dimension(180, 48));
 
-        JLabel nameLabel = new JLabel(shortenText(product.getName(), 18));
-        nameLabel.setFont(new Font("Arial", Font.BOLD, 17));
-        nameLabel.setForeground(new Color(75, 75, 75));
-        nameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JLabel nameLabel = createTextLabel(shortenText(product.getName(), 18), new Font("Arial", Font.BOLD, 17), TITLE_COLOR);
         nameLabel.setPreferredSize(new Dimension(180, 24));
         nameLabel.setMinimumSize(new Dimension(180, 24));
         nameLabel.setMaximumSize(new Dimension(180, 24));
 
-        JLabel descLabel = new JLabel(shortenText(product.getDescription(), 25));
-        descLabel.setFont(new Font("Arial", Font.BOLD, 12));
-        descLabel.setForeground(new Color(170, 170, 170));
-        descLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JLabel descLabel = createTextLabel(shortenText(product.getDescription(), 25), new Font("Arial", Font.BOLD, 12), SUBTLE_COLOR);
         descLabel.setPreferredSize(new Dimension(180, 20));
         descLabel.setMinimumSize(new Dimension(180, 20));
         descLabel.setMaximumSize(new Dimension(180, 20));
@@ -72,13 +70,9 @@ public class ProductCard extends JPanel {
         bottomPanel.setMinimumSize(new Dimension(180, 35));
         bottomPanel.setMaximumSize(new Dimension(180, 35));
 
-        JLabel brandLabel = new JLabel(product.getBrand());
-        brandLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        brandLabel.setForeground(new Color(70, 70, 70));
+        JLabel brandLabel = createTextLabel(product.getBrand(), new Font("Arial", Font.PLAIN, 12), TEXT_COLOR);
 
-        JLabel priceLabel = new JLabel(product.getPrice());
-        priceLabel.setFont(new Font("Arial", Font.BOLD, 19));
-        priceLabel.setForeground(new Color(65, 65, 65));
+        JLabel priceLabel = createTextLabel(product.getPrice(), new Font("Arial", Font.BOLD, 19), new Color(65, 65, 65));
 
         bottomPanel.add(brandLabel, BorderLayout.WEST);
         bottomPanel.add(priceLabel, BorderLayout.EAST);
@@ -95,23 +89,17 @@ public class ProductCard extends JPanel {
     }
 
     public void setSelectedStyle() {
-        setBackground(new Color(248, 248, 248));
-        setBorder(new CompoundBorder(
-                new LineBorder(new Color(70, 130, 255), 2, true),
-                new EmptyBorder(10, 10, 10, 10)
-        ));
+        setBackground(new Color(250, 250, 250));
+        setCardBorder(SELECTED_BORDER);
     }
 
     public void setDefaultStyle() {
-        setBackground(new Color(242, 242, 242));
-        setBorder(new CompoundBorder(
-                new LineBorder(new Color(242, 242, 242), 2, true),
-                new EmptyBorder(10, 10, 10, 10)
-        ));
+        setBackground(CARD_COLOR);
+        setCardBorder(CARD_COLOR);
     }
 
     public void setHoverStyle() {
-        setBackground(new Color(232, 232, 232));
+        setBackground(HOVER_COLOR);
     }
 
     private ImageIcon loadImage(String path, int width, int height) {
@@ -134,5 +122,21 @@ public class ProductCard extends JPanel {
         }
 
         return text.substring(0, maxLength) + "...";
+    }
+
+    private JLabel createTextLabel(String text, Font font, Color color) {
+        JLabel label = new JLabel(text);
+        label.setFont(font);
+        label.setForeground(color);
+        label.setAlignmentX(Component.LEFT_ALIGNMENT);
+        return label;
+    }
+
+    // Dùng chung một kiểu viền để card đồng nhất và code ngắn hơn.
+    private void setCardBorder(Color borderColor) {
+        setBorder(new CompoundBorder(
+                new LineBorder(borderColor, 1, true),
+                new EmptyBorder(10, 10, 10, 10)
+        ));
     }
 }

@@ -10,6 +10,12 @@ import java.util.List;
 
 public class ShoeStoreView extends JFrame {
 
+    private static final Color WHITE = Color.WHITE;
+    private static final Color TITLE_COLOR = new Color(70, 70, 70);
+    private static final Color TEXT_COLOR = new Color(80, 80, 80);
+    private static final Color MUTED_COLOR = new Color(150, 150, 150);
+    private static final int DETAIL_WIDTH = 300;
+
     private JLabel mainImageLabel;
     private JLabel mainNameLabel;
     private JLabel mainPriceLabel;
@@ -18,7 +24,7 @@ public class ShoeStoreView extends JFrame {
 
     private JPanel productGrid;
 
-    private List<ProductCard> productCards = new ArrayList<>();
+    private final List<ProductCard> productCards = new ArrayList<>();
 
     public ShoeStoreView() {
         setTitle("Lab 3 - Shoe Store");
@@ -31,8 +37,8 @@ public class ShoeStoreView extends JFrame {
 
     private void createUI() {
         JPanel rootPanel = new JPanel(new BorderLayout());
-        rootPanel.setBackground(Color.WHITE);
-        rootPanel.setBorder(new EmptyBorder(15, 15, 15, 15));
+        rootPanel.setBackground(WHITE);
+        rootPanel.setBorder(new EmptyBorder(30, 18, 18, 18));
 
         JPanel leftPanel = createLeftPanel();
         JPanel rightPanel = createRightPanel();
@@ -45,47 +51,38 @@ public class ShoeStoreView extends JFrame {
 
     private JPanel createLeftPanel() {
         JPanel leftPanel = new JPanel();
-        leftPanel.setPreferredSize(new Dimension(290, 600));
+        leftPanel.setPreferredSize(new Dimension(DETAIL_WIDTH, 600));
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-        leftPanel.setBackground(Color.WHITE);
-        leftPanel.setBorder(new EmptyBorder(10, 0, 10, 25));
+        leftPanel.setBackground(WHITE);
+        leftPanel.setBorder(new EmptyBorder(55, 0, 10, 26));
 
         mainImageLabel = new JLabel();
-        mainImageLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        mainImageLabel.setPreferredSize(new Dimension(280, 190));
-        mainImageLabel.setMaximumSize(new Dimension(280, 190));
+        mainImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        mainImageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        mainImageLabel.setPreferredSize(new Dimension(DETAIL_WIDTH, 180));
+        mainImageLabel.setMaximumSize(new Dimension(DETAIL_WIDTH, 180));
 
         JSeparator separator = new JSeparator();
-        separator.setMaximumSize(new Dimension(280, 1));
+        separator.setForeground(new Color(210, 214, 220));
+        separator.setMaximumSize(new Dimension(DETAIL_WIDTH, 1));
 
-        mainNameLabel = new JLabel();
-        mainNameLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        mainNameLabel.setForeground(new Color(70, 70, 70));
-        mainNameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        mainPriceLabel = new JLabel();
-        mainPriceLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        mainPriceLabel.setForeground(new Color(45, 45, 45));
-        mainPriceLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        mainBrandLabel = new JLabel();
-        mainBrandLabel.setFont(new Font("Arial", Font.PLAIN, 13));
-        mainBrandLabel.setForeground(new Color(80, 80, 80));
-        mainBrandLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        mainNameLabel = createLabel(new Font("Arial", Font.BOLD, 22), TITLE_COLOR);
+        mainPriceLabel = createLabel(new Font("Arial", Font.BOLD, 20), new Color(45, 45, 45));
+        mainBrandLabel = createLabel(new Font("Arial", Font.PLAIN, 13), TEXT_COLOR);
 
         mainDescriptionArea = new JTextArea();
         mainDescriptionArea.setFont(new Font("Arial", Font.BOLD, 14));
-        mainDescriptionArea.setForeground(new Color(150, 150, 150));
+        mainDescriptionArea.setForeground(MUTED_COLOR);
         mainDescriptionArea.setLineWrap(true);
         mainDescriptionArea.setWrapStyleWord(true);
         mainDescriptionArea.setEditable(false);
         mainDescriptionArea.setFocusable(false);
         mainDescriptionArea.setOpaque(false);
         mainDescriptionArea.setAlignmentX(Component.LEFT_ALIGNMENT);
-        mainDescriptionArea.setMaximumSize(new Dimension(280, 120));
+        mainDescriptionArea.setMaximumSize(new Dimension(DETAIL_WIDTH, 120));
 
         leftPanel.add(mainImageLabel);
-        leftPanel.add(Box.createVerticalStrut(20));
+        leftPanel.add(Box.createVerticalStrut(28));
         leftPanel.add(separator);
         leftPanel.add(Box.createVerticalStrut(15));
         leftPanel.add(mainNameLabel);
@@ -101,13 +98,14 @@ public class ShoeStoreView extends JFrame {
 
     private JPanel createRightPanel() {
         JPanel container = new JPanel(new BorderLayout());
-        container.setBackground(Color.WHITE);
+        container.setBackground(WHITE);
+        container.setBorder(new EmptyBorder(55, 0, 0, 0));
 
         productGrid = new JPanel(new GridLayout(0, 4, 10, 10));
-        productGrid.setBackground(Color.WHITE);
+        productGrid.setBackground(WHITE);
 
         JPanel topWrapper = new JPanel(new BorderLayout());
-        topWrapper.setBackground(Color.WHITE);
+        topWrapper.setBackground(WHITE);
         topWrapper.add(productGrid, BorderLayout.NORTH);
 
         JScrollPane scrollPane = new JScrollPane(topWrapper);
@@ -115,7 +113,7 @@ public class ShoeStoreView extends JFrame {
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.getViewport().setBackground(Color.WHITE);
+        scrollPane.getViewport().setBackground(WHITE);
 
         container.add(scrollPane, BorderLayout.CENTER);
 
@@ -137,36 +135,15 @@ public class ShoeStoreView extends JFrame {
     }
 
     public void showProductDetail(Product product) {
-        mainImageLabel.setIcon(loadImage(product.getImagePath(), 280, 180));
+        mainImageLabel.setIcon(loadImage(product.getImagePath(), 240, 145));
         mainNameLabel.setText(product.getName());
         mainPriceLabel.setText(product.getPrice());
         mainBrandLabel.setText(product.getBrand());
         mainDescriptionArea.setText(product.getDescription());
 
-        playSimpleEffect();
-    }
-
-    public List<ProductCard> getProductCards() {
-        return productCards;
-    }
-
-    private void playSimpleEffect() {
-        mainImageLabel.setVisible(false);
-        mainNameLabel.setVisible(false);
-        mainPriceLabel.setVisible(false);
-        mainBrandLabel.setVisible(false);
-        mainDescriptionArea.setVisible(false);
-
-        Timer timer = new Timer(120, e -> {
-            mainImageLabel.setVisible(true);
-            mainNameLabel.setVisible(true);
-            mainPriceLabel.setVisible(true);
-            mainBrandLabel.setVisible(true);
-            mainDescriptionArea.setVisible(true);
-        });
-
-        timer.setRepeats(false);
-        timer.start();
+        // Làm mới nhẹ để nội dung đổi ngay sau khi chọn sản phẩm.
+        revalidate();
+        repaint();
     }
 
     private ImageIcon loadImage(String path, int width, int height) {
@@ -181,5 +158,17 @@ public class ShoeStoreView extends JFrame {
         Image scaledImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
 
         return new ImageIcon(scaledImage);
+    }
+
+    public List<ProductCard> getProductCards() {
+        return productCards;
+    }
+
+    private JLabel createLabel(Font font, Color color) {
+        JLabel label = new JLabel();
+        label.setFont(font);
+        label.setForeground(color);
+        label.setAlignmentX(Component.LEFT_ALIGNMENT);
+        return label;
     }
 }

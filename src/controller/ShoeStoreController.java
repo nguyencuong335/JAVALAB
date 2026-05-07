@@ -6,13 +6,13 @@ import view.ShoeStoreView;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ShoeStoreController {
 
-    private ShoeStoreView view;
-    private List<Product> products;
+    private final ShoeStoreView view;
+    private final List<Product> products;
 
     private ProductCard selectedCard;
 
@@ -30,73 +30,64 @@ public class ShoeStoreController {
     }
 
     private List<Product> createProducts() {
-        List<Product> productList = new ArrayList<>();
-
-        productList.add(new Product(
+        // Dữ liệu mẫu để render giao diện danh sách giày.
+        return Arrays.asList(
+                new Product(
                 "4DFWD PULSE SHOES",
                 "$160.00",
                 "Adidas",
                 "This product is excluded from all promotional discounts and offers.",
                 "images/img1.png"
-        ));
-
-        productList.add(new Product(
+        ),
+                new Product(
                 "FORUM MID SHOES",
                 "$100.00",
                 "Adidas",
                 "Classic basketball-inspired shoes with a retro Adidas look.",
                 "images/img2.png"
-        ));
-
-        productList.add(new Product(
+        ),
+                new Product(
                 "SUPERNOVA SHOES",
                 "$150.00",
                 "Adidas",
                 "Comfortable running shoes for daily training and walking.",
                 "images/img3.png"
-        ));
-
-        productList.add(new Product(
+        ),
+                new Product(
                 "NMD CITY STOCK 2",
                 "$160.00",
                 "Adidas",
                 "Modern Adidas shoes with a lightweight design and responsive sole.",
                 "images/img4.png"
-        ));
-
-        productList.add(new Product(
+        ),
+                new Product(
                 "4DFWD PULSE BLACK",
                 "$120.00",
                 "Adidas",
                 "Sporty black running shoes with a futuristic sole design.",
                 "images/img5.png"
-        ));
-
-        productList.add(new Product(
+        ),
+                new Product(
                 "4DFWD PULSE ORANGE",
                 "$160.00",
                 "Adidas",
                 "Bright orange running shoes designed for energetic daily use.",
                 "images/img6.png"
-        ));
-
-        productList.add(new Product(
+        ),
+                new Product(
                 "4DFWD PULSE SHOES",
                 "$160.00",
                 "Adidas",
                 "This product is excluded from all promotional discounts and offers.",
                 "images/img1.png"
-        ));
-
-        productList.add(new Product(
+        ),
+                new Product(
                 "FORUM MID SHOES",
                 "$100.00",
                 "Adidas",
                 "This product is excluded from all promotional discounts and offers.",
                 "images/img2.png"
         ));
-
-        return productList;
     }
 
     private void addEvents() {
