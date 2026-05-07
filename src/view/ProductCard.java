@@ -14,19 +14,23 @@ public class ProductCard extends JPanel {
     private static final Color TITLE_COLOR = new Color(75, 75, 75);
     private static final Color SUBTLE_COLOR = new Color(170, 170, 170);
     private static final Color TEXT_COLOR = new Color(70, 70, 70);
+    private static final int CARD_WIDTH = 200;
+    private static final int CARD_HEIGHT = 238;
+
+    private boolean selected;
 
     private final Product product;
 
     public ProductCard(Product product) {
         this.product = product;
 
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBackground(CARD_COLOR);
+        setLayout(new BorderLayout(0, 12));
+        setOpaque(false);
         setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        setPreferredSize(new Dimension(200, 238));
-        setMinimumSize(new Dimension(200, 238));
-        setMaximumSize(new Dimension(200, 238));
+        setPreferredSize(new Dimension(CARD_WIDTH, CARD_HEIGHT));
+        setMinimumSize(new Dimension(CARD_WIDTH, CARD_HEIGHT));
+        setMaximumSize(new Dimension(CARD_WIDTH, CARD_HEIGHT));
 
         setCardBorder(CARD_COLOR);
 
@@ -37,38 +41,40 @@ public class ProductCard extends JPanel {
         JPanel textPanel = new JPanel();
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
         textPanel.setOpaque(false);
-        textPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        textPanel.setPreferredSize(new Dimension(180, 48));
-        textPanel.setMinimumSize(new Dimension(180, 48));
-        textPanel.setMaximumSize(new Dimension(180, 48));
+        textPanel.setPreferredSize(new Dimension(182, 54));
+        textPanel.setMinimumSize(new Dimension(182, 54));
+        textPanel.setMaximumSize(new Dimension(182, 54));
 
-        JLabel nameLabel = createTextLabel(shortenText(product.getName(), 18), new Font("Arial", Font.BOLD, 17), TITLE_COLOR);
-        nameLabel.setPreferredSize(new Dimension(180, 24));
-        nameLabel.setMinimumSize(new Dimension(180, 24));
-        nameLabel.setMaximumSize(new Dimension(180, 24));
+        JLabel nameLabel = createTextLabel(shortenText(product.getName(), 16), new Font("Arial", Font.BOLD, 16), TITLE_COLOR);
+        nameLabel.setPreferredSize(new Dimension(182, 24));
+        nameLabel.setMinimumSize(new Dimension(182, 24));
+        nameLabel.setMaximumSize(new Dimension(182, 24));
 
         JLabel descLabel = createTextLabel(shortenText(product.getDescription(), 25), new Font("Arial", Font.BOLD, 12), SUBTLE_COLOR);
-        descLabel.setPreferredSize(new Dimension(180, 20));
-        descLabel.setMinimumSize(new Dimension(180, 20));
-        descLabel.setMaximumSize(new Dimension(180, 20));
+        descLabel.setPreferredSize(new Dimension(182, 20));
+        descLabel.setMinimumSize(new Dimension(182, 20));
+        descLabel.setMaximumSize(new Dimension(182, 20));
 
         textPanel.add(nameLabel);
         textPanel.add(Box.createVerticalStrut(4));
         textPanel.add(descLabel);
 
         JLabel imageLabel = new JLabel();
-        imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        imageLabel.setPreferredSize(new Dimension(180, 100));
-        imageLabel.setMinimumSize(new Dimension(180, 100));
-        imageLabel.setMaximumSize(new Dimension(180, 100));
-        imageLabel.setIcon(loadImage(product.getImagePath(), 165, 100));
+        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        imageLabel.setPreferredSize(new Dimension(182, 110));
+        imageLabel.setMinimumSize(new Dimension(182, 110));
+        imageLabel.setMaximumSize(new Dimension(182, 110));
+        imageLabel.setIcon(loadImage(product.getImagePath(), 150, 95));
+
+        JPanel imagePanel = new JPanel(new BorderLayout());
+        imagePanel.setOpaque(false);
+        imagePanel.add(imageLabel, BorderLayout.CENTER);
 
         JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.setOpaque(false);
-        bottomPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        bottomPanel.setPreferredSize(new Dimension(180, 35));
-        bottomPanel.setMinimumSize(new Dimension(180, 35));
-        bottomPanel.setMaximumSize(new Dimension(180, 35));
+        bottomPanel.setPreferredSize(new Dimension(182, 35));
+        bottomPanel.setMinimumSize(new Dimension(182, 35));
+        bottomPanel.setMaximumSize(new Dimension(182, 35));
 
         JLabel brandLabel = createTextLabel(product.getBrand(), new Font("Arial", Font.PLAIN, 12), TEXT_COLOR);
 
@@ -77,11 +83,13 @@ public class ProductCard extends JPanel {
         bottomPanel.add(brandLabel, BorderLayout.WEST);
         bottomPanel.add(priceLabel, BorderLayout.EAST);
 
-        add(textPanel);
-        add(Box.createVerticalStrut(18));
-        add(imageLabel);
-        add(Box.createVerticalGlue());
-        add(bottomPanel);
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.setOpaque(false);
+        centerPanel.add(imagePanel, BorderLayout.SOUTH);
+
+        add(textPanel, BorderLayout.NORTH);
+        add(centerPanel, BorderLayout.CENTER);
+        add(bottomPanel, BorderLayout.SOUTH);
     }
 
     public Product getProduct() {
@@ -89,31 +97,33 @@ public class ProductCard extends JPanel {
     }
 
     public void setSelectedStyle() {
-        setBackground(new Color(250, 250, 250));
+        selected = true;
         setCardBorder(SELECTED_BORDER);
+        repaint();
     }
 
     public void setDefaultStyle() {
-        setBackground(CARD_COLOR);
+        selected = false;
         setCardBorder(CARD_COLOR);
+        repaint();
     }
 
     public void setHoverStyle() {
-        setBackground(HOVER_COLOR);
+        if (!selected) {
+            setCardBorder(HOVER_COLOR);
+        }
+        repaint();
     }
 
-    private ImageIcon loadImage(String path, int width, int height) {
+    private ImageIcon loadImage(String path, int maxWidth, int maxHeight) {
         ImageIcon icon = new ImageIcon(path);
 
         if (icon.getIconWidth() <= 0) {
-            System.out.println("Không tìm thấy ảnh: " + path);
+            System.out.println("Khong tim thay anh: " + path);
             return new ImageIcon();
         }
 
-        Image image = icon.getImage();
-        Image scaledImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-
-        return new ImageIcon(scaledImage);
+        return new ImageIcon(scaleToFit(icon.getImage(), maxWidth, maxHeight));
     }
 
     private String shortenText(String text, int maxLength) {
@@ -132,11 +142,36 @@ public class ProductCard extends JPanel {
         return label;
     }
 
+    // Giữ tỉ lệ ảnh để giày trong card không bị nén theo khung.
+    private Image scaleToFit(Image image, int maxWidth, int maxHeight) {
+        int imageWidth = image.getWidth(null);
+        int imageHeight = image.getHeight(null);
+        double scale = Math.min((double) maxWidth / imageWidth, (double) maxHeight / imageHeight);
+
+        int width = Math.max(1, (int) Math.round(imageWidth * scale));
+        int height = Math.max(1, (int) Math.round(imageHeight * scale));
+
+        return image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+    }
+
     // Dùng chung một kiểu viền để card đồng nhất và code ngắn hơn.
     private void setCardBorder(Color borderColor) {
         setBorder(new CompoundBorder(
                 new LineBorder(borderColor, 1, true),
-                new EmptyBorder(10, 10, 10, 10)
+                new EmptyBorder(12, 10, 10, 10)
         ));
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setColor(selected ? new Color(250, 250, 250) : CARD_COLOR);
+
+        // Tô nền bo góc để card giống mockup hơn.
+        g2.fillRoundRect(0, 0, getWidth(), getHeight(), 18, 18);
+        g2.dispose();
     }
 }
